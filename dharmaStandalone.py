@@ -6,7 +6,7 @@ import PIL as p
 import math
 import os
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageFilter
-from random import randint, uniform
+from random import randint, uniform, choice
 
 # usage dharma {dir} {qty} {size}
 #{dir}  - directory containing source images in .jpg format
@@ -14,22 +14,14 @@ from random import randint, uniform
 #{size} - size of final mandala in pixels (default 2000)
 
 
-#randomly choose fragment angle
-angles = [11.25, 22.5, 45]
-angle = angles[randint(0, 1)]
-
 regularImage = False
 saturateImage = False
 contrastImage = False
 satcontImage = True
 
 def setEnv():
-	#set environment variables
-	if (len(sys.argv) == 4):
-		direct = './' + sys.argv[1]
-		quantity = int(sys.argv[2])
-		outputWidth = int(sys.argv[3])
-	else:
+
+	def fail():
 		print('Incorrect number of arguments, defaults have been set')
 		print('Usage  - dharma \{dir\} \{qty\} \{size\}\{dir\}\n')
 		print('\{dir}  - directory containing source images in .jpg format')
@@ -37,22 +29,43 @@ def setEnv():
 		print('\{size\} - size of final mandala in pixels (default 2000)\n')
 		print('eg: dharma zoesimages 5 1000')
 		print('will give 5 mandalas at 1000 pixels wide for each image in the directory "zoesimages"')
+		print('\nInappropriate input, defaults have been set, QUANTITY = 20, SIZE = 2000px')
+		print('Press enter to continue.......')
+		input()
 		direct = './'
 		quantity = 20
-		outputWidth = 2000
+		origOutputwidth = 2000
+
+	#set environment variables
+	if (len(sys.argv) == 4):
+
+		direct = './' + sys.argv[1]
+		if not os.path.isdir(direct):
+			print(direct + ' does not exist')
+			exit()
+		
+		try:
+			quantity = int(sys.argv[2])
+		except:
+			fail()
+
+		try:
+			origOutputwidth = int(sys.argv[3])
+		except:
+			fail()
+
+	else:
+		fail()
 
 	listOfImages = []
 	for file in os.listdir(direct):
 		if file.endswith('.jpg'):
 			listOfImages.append(file)
 
-	return direct, quantity, outputWidth, listOfImages
+	return direct, quantity, origOutputwidth, listOfImages
 	
 
 def buildMandalas(img, currentDir):
-
-	print('source x = ' +str(img.size[0]))
-	print('source y = ' +str(img.size[1]))
 
 
 	def generateCoords(img, outputWidth, quantity):
@@ -74,7 +87,7 @@ def buildMandalas(img, currentDir):
 
 				stx = randint(0, img.size[0] - (outputWidth / 2))
 				sty = stx
-				enx = stx + (outputWidth / 2)
+				enx = stx + (outputWidth)
 				eny = enx
 
 			#if there is remainder the cropping algorithm will be out by a few pixels, this just ensures it returns an integer
@@ -229,6 +242,13 @@ def buildMandalas(img, currentDir):
 
 		return output
 
+	#randomly choose fragment angle
+	angles = [11.25, 22.5, 45]
+	angle = angles[randint(0, 1)]
+
+	print('angle = ' + str(angle))
+	print('source x = ' +str(img.size[0]))
+	print('source y = ' +str(img.size[1]))
 
 	coordsList = generateCoords(img, outputWidth, quantity)
 
@@ -298,23 +318,38 @@ def buildMandalas(img, currentDir):
 
 		print('***************************\n')
 
+#get initial variables
+direct, quantity, origOutputwidth, listOfImages = setEnv()
 
-direct, quantity, outputWidth, listOfImages = setEnv()
-
+#iterate over all source images
 for img in listOfImages:
 
 	currentImage = direct + '/' + img
 	currentDir = './output/' + img[:-4] + '/'
+	outputWidth = origOutputwidth
 
 	img = Image.open(currentImage)
 
+	#ensure image is in landscape mode
+	if img.size[0] < img.size[1]:
+		img = img.transpose(Image.ROTATE_90)
+		print('Rotated source image')
+
+	#ensure image is of sufficient size
 	if img.size[0] - (outputWidth / 2) < 1:
 		print('Source image is too small (' + str(img.size[0]) + ')')
 		print('Requested output width is ' + str(outputWidth))
-		print('Not processing ' + currentImage + '\n')
+		print('Output size will be set to ' + str(math.floor(img.size[0] / 2)) + ' px')
+		outputWidth = math.floor(img.size[0] / 2)
 		continue
 
-	os.mkdir(currentDir)
+	#check if directories exist create if needed
+	if not os.path.isdir('./output'):
+		os.mkdir('./output')
+	if not os.path.isdir(currentDir):
+		os.mkdir(currentDir)
+
+	#copy source image
 	shutil.copy(currentImage, currentDir)
 
 	buildMandalas(img, currentDir)
