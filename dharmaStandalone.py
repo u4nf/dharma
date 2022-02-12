@@ -9,13 +9,6 @@ import os
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageFilter
 from random import randint, uniform, choice
 
-
-regularImage = False
-saturateImage = False
-contrastImage = False
-satcontImage = True
-
-
 parser = argparse.ArgumentParser(description='A commandline tool to generate mandalas utilising random numbers.  It has the capacity to use multiple input source images, and output multiple mandalas to a specified width in pixels.')
 parser.add_argument('-d', type=str, default='./', help='The directory that contains source images. (Defaults to current directory)')
 parser.add_argument('-q', type=int, default=5, help='The quantity of mandalas requested for each source image. (Defaults to 5)')
@@ -27,10 +20,16 @@ direct = './' + args.d
 quantity = args.q
 origOutputwidth = args.s
 
+regularImage = False
+saturateImage = False
+contrastImage = False
+satcontImage = True
+
 if not os.path.isdir(direct):
 	print(direct + ' does not exist')
 	exit()
 
+#create list of .jpg in specified directory
 listOfImages = []
 for file in os.listdir(direct):
 	if file.endswith('.jpg'):
@@ -95,7 +94,7 @@ def buildMandalas(img, currentDir):
 
 
 
-		img = p.Image.open(currentImage)
+		
 		
 		verify(img, stx, sty, enx, eny)
 
@@ -216,11 +215,7 @@ def buildMandalas(img, currentDir):
 
 		return output
 
-	#randomly choose fragment angle
-	angles = [11.25, 22.5, 45]
-	angle = angles[randint(0, 1)]
 
-	print('angle = ' + str(angle))
 	print('source x = ' +str(img.size[0]))
 	print('source y = ' +str(img.size[1]))
 
@@ -229,7 +224,15 @@ def buildMandalas(img, currentDir):
 
 	for i in range(0, len(coordsList)):
 		#iterate over each item in the coords list and produce mandala for each
-		#if quantity variable set to one, it will only run once
+
+		#randomly choose fragment angle
+		angle = choice([11.25, 22.5, 45])
+		print('angle = ' + str(angle))
+
+		#randomly choose rotation
+		img = p.Image.open(currentImage)
+		flip = choice([Image.FLIP_LEFT_RIGHT, Image.FLIP_TOP_BOTTOM])
+		img = img.transpose(flip)
 
 		frag = createWedge(angle, coordsList[i][0], coordsList[i][1], coordsList[i][2], coordsList[i][3])
 		output = construct(frag, angle)
@@ -295,11 +298,21 @@ def buildMandalas(img, currentDir):
 
 
 #iterate over all source images
-for img in listOfImages:
+for imageName in listOfImages:
 
-	currentImage = direct + '/' + img
-	currentDir = './output/' + img[:-4] + '/'
+	currentImage = direct + '/' + imageName
+	currentDir = './output/' + imageName[:-4] + '/'
 	outputWidth = origOutputwidth
+
+	#check if directories exist create if needed
+	if not os.path.isdir('./output'):
+		os.mkdir('./output')
+	if not os.path.isdir(currentDir):
+		os.mkdir(currentDir)
+
+	#copy source image
+	shutil.copy(currentImage, currentDir)
+	os.rename(currentDir + imageName, currentDir + '0.jpg')
 
 	img = Image.open(currentImage)
 	print('******************************************************')
@@ -320,14 +333,5 @@ for img in listOfImages:
 		print('Output size will be set to ' + str(math.floor(smallestAxis * 0.9)) + 'px')
 		outputWidth = math.floor(smallestAxis * 0.9)
 		print('out - ' + str(outputWidth))
-		
-	#check if directories exist create if needed
-	if not os.path.isdir('./output'):
-		os.mkdir('./output')
-	if not os.path.isdir(currentDir):
-		os.mkdir(currentDir)
-
-	#copy source image
-	shutil.copy(currentImage, currentDir)
-
+	
 	buildMandalas(img, currentDir)
