@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+import argparse
 import shutil
 import PIL as p
 import math
@@ -8,67 +9,38 @@ import os
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageFilter
 from random import randint, uniform, choice
 
-# usage dharma {dir} {qty} {size}
-#{dir}  - directory containing source images in .jpg format
-#{qty}  - quantity of mandalas per source image (default 20)
-#{size} - size of final mandala in pixels (default 2000)
-
 
 regularImage = False
 saturateImage = False
 contrastImage = False
 satcontImage = True
 
-def setEnv():
 
-	def fail():
-		print('Incorrect number of arguments, defaults have been set')
-		print('Usage  - dharma \{dir\} \{qty\} \{size\}\{dir\}\n')
-		print('\{dir}  - directory containing source images in .jpg format')
-		print('\{qty\}  - quantity of mandalas per source image (default 20)')
-		print('\{size\} - size of final mandala in pixels (default 2000)\n')
-		print('eg: dharma zoesimages 5 1000')
-		print('will give 5 mandalas at 1000 pixels wide for each image in the directory "zoesimages"')
-		print('\nInappropriate input, defaults have been set, QUANTITY = 20, SIZE = 2000px')
-		print('Press enter to continue.......')
-		input()
-		direct = './'
-		quantity = 20
-		origOutputwidth = 2000
+parser = argparse.ArgumentParser(description='A commandline tool to generate mandalas utilising random numbers.  It has the capacity to use multiple input source images, and output multiple mandalas to a specified width in pixels.')
+parser.add_argument('-d', type=str, default='./', help='The directory that contains source images. (Defaults to current directory)')
+parser.add_argument('-q', type=int, default=5, help='The quantity of mandalas requested for each source image. (Defaults to 5)')
+parser.add_argument('-s', type=int, default=2000, help='The horizontal size in pixels requested for each mandala.  (Defaults to 2000)')
+args=parser.parse_args()
 
-	#set environment variables
-	if (len(sys.argv) == 4):
+#set variables
+direct = './' + args.d
+quantity = args.q
+origOutputwidth = args.s
 
-		direct = './' + sys.argv[1]
-		if not os.path.isdir(direct):
-			print(direct + ' does not exist')
-			exit()
-		
-		try:
-			quantity = int(sys.argv[2])
-		except:
-			fail()
+if not os.path.isdir(direct):
+	print(direct + ' does not exist')
+	exit()
 
-		try:
-			origOutputwidth = int(sys.argv[3])
-		except:
-			fail()
+listOfImages = []
+for file in os.listdir(direct):
+	if file.endswith('.jpg'):
+		listOfImages.append(file)
 
-	else:
-		fail()
-
-	listOfImages = []
-	for file in os.listdir(direct):
-		if file.endswith('.jpg'):
-			listOfImages.append(file)
-
-	return direct, quantity, origOutputwidth, listOfImages
-	
 
 def buildMandalas(img, currentDir):
 
 
-	def generateCoords(img, outputWidth, quantity):
+	def generateCoords(img, quantity):
 		#im - image to be processed
 		#outputwidth - minimum width in pixels of finished mandala
 		#quantity - how many tuples to be created
@@ -85,11 +57,13 @@ def buildMandalas(img, currentDir):
 			
 			while enx > img.size[0] or eny > img.size[1]:
 
-				stx = randint(0, img.size[0] - (outputWidth / 2))
+				stx = randint(0, img.size[0] - (math.floor(outputWidth / 2)))
 				sty = stx
-				enx = stx + (outputWidth)
+				enx = stx + (math.floor(outputWidth))
 				eny = enx
 
+				print('sty = ' + str(sty) + ' e - ' + str(eny) + 'outputWidth = ' + str(outputWidth))
+				print(math.floor(smallestAxis * 1))
 			#if there is remainder the cropping algorithm will be out by a few pixels, this just ensures it returns an integer
 			if ((enx + stx) % 2 == 1):
 				stx = stx + 1
@@ -107,7 +81,7 @@ def buildMandalas(img, currentDir):
 		def verify(img, stx, sty, enx, eny):
 			#ensure start and end points within appropriate range so wedge will be complete
 
-			print('user defined coordinates =  start (x/y) ' + str(stx) + '/' + str(sty) + ' - end (x/y) ' + str(enx) + '/' + str(eny))
+			print('Generated coordinates =  start (x/y) ' + str(stx) + '/' + str(sty) + ' - end (x/y) ' + str(enx) + '/' + str(eny))
 			#verify angle will not give blank space or overlap on output image
 			if (360 % angle != 0):
 				print('inappropriate angle. suggest - 90, 45')
@@ -250,7 +224,7 @@ def buildMandalas(img, currentDir):
 	print('source x = ' +str(img.size[0]))
 	print('source y = ' +str(img.size[1]))
 
-	coordsList = generateCoords(img, outputWidth, quantity)
+	coordsList = generateCoords(img, quantity)
 
 
 	for i in range(0, len(coordsList)):
@@ -294,7 +268,7 @@ def buildMandalas(img, currentDir):
 			#only save here if saturation flag set (eliminates excessive files if satcontImage is set)
 			if saturateImage:
 				print('Saving saturated image as ' + str(outname) + 's.png\n')
-				outputSaturate.save(currentDir +str(outname) + 's.png')
+				outputSaturate.save(currentDir + str(outname) + 's.png')
 
 
 		if contrastImage or satcontImage:
@@ -308,18 +282,17 @@ def buildMandalas(img, currentDir):
 				contrastFilter = ImageEnhance.Contrast(outputSaturate)
 				outputContrast = contrastFilter.enhance(contrastInt)
 				print('Saving contrasted / saturated image as ' + str(outname) + 'sc.png\n')
-				outputContrast.save(currentDir +str(outname) + 'sc.png')
+				outputContrast.save(currentDir + str(outname) + 'sc.png')
 
 			else:
 				contrastFilter = ImageEnhance.Contrast(output)
 				outputContrast = contrastFilter.enhance(contrastInt)
-				print('Saving contrasted image as ' + str(outname) + 'c.png\n')
-				outputContrast.save(currentDir +str(outname) + 'c.png')
+				print('Saving contrasted image as ' + str(currentDir + outname) + 'c.png\n')
+				outputContrast.save(currentDir + str(outname) + 'c.png')
 
-		print('***************************\n')
+		print('***\n')
 
-#get initial variables
-direct, quantity, origOutputwidth, listOfImages = setEnv()
+
 
 #iterate over all source images
 for img in listOfImages:
@@ -329,20 +302,25 @@ for img in listOfImages:
 	outputWidth = origOutputwidth
 
 	img = Image.open(currentImage)
+	print('******************************************************')
+	print('Source image: ' + currentDir)
 
 	#ensure image is in landscape mode
-	if img.size[0] < img.size[1]:
+	if img.size[0] > img.size[1]:
 		img = img.transpose(Image.ROTATE_90)
 		print('Rotated source image')
 
 	#ensure image is of sufficient size
-	if img.size[0] - (outputWidth / 2) < 1:
-		print('Source image is too small (' + str(img.size[0]) + ')')
-		print('Requested output width is ' + str(outputWidth))
-		print('Output size will be set to ' + str(math.floor(img.size[0] / 2)) + ' px')
-		outputWidth = math.floor(img.size[0] / 2)
-		continue
+	smallestAxis = min(img.size[0], img.size[1])
 
+	if (smallestAxis - (outputWidth / 2) < 1):
+		print(math.floor(smallestAxis * 1))
+		print('Source image is too small (' + str(img.size[0]) + 'px wide, / ' + str(img.size[1]) + 'px high)')
+		print('Requested output width is ' + str(outputWidth) + 'px')
+		print('Output size will be set to ' + str(math.floor(smallestAxis * 0.9)) + 'px')
+		outputWidth = math.floor(smallestAxis * 0.9)
+		print('out - ' + str(outputWidth))
+		
 	#check if directories exist create if needed
 	if not os.path.isdir('./output'):
 		os.mkdir('./output')
