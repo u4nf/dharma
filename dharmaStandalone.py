@@ -58,11 +58,10 @@ def buildMandalas(img, currentDir):
 
 				stx = randint(0, img.size[0] - (math.floor(outputWidth / 2)))
 				sty = stx
-				enx = stx + (math.floor(outputWidth))
+				enx = stx + (math.floor(outputWidth / 2))
 				eny = enx
 
-				print('sty = ' + str(sty) + ' e - ' + str(eny) + 'outputWidth = ' + str(outputWidth))
-				print(math.floor(smallestAxis * 1))
+
 			#if there is remainder the cropping algorithm will be out by a few pixels, this just ensures it returns an integer
 			if ((enx + stx) % 2 == 1):
 				stx = stx + 1
@@ -77,27 +76,6 @@ def buildMandalas(img, currentDir):
 		#creates a fragment using the verified x/y coordinates
 		#returns a cropped image containing the fragment
 
-		def verify(img, stx, sty, enx, eny):
-			#ensure start and end points within appropriate range so wedge will be complete
-
-			print('Generated coordinates =  start (x/y) ' + str(stx) + '/' + str(sty) + ' - end (x/y) ' + str(enx) + '/' + str(eny))
-			#verify angle will not give blank space or overlap on output image
-			if (360 % angle != 0):
-				print('inappropriate angle. suggest - 90, 45')
-				print('You entered ' + str(angle))
-				quit()
-
-			#check that start coords are before end coords
-			if (stx >= enx):
-				print('start point must be less than end point, you entered: start (x, y) ' + str(stx) + '/' + str(sty) + ', end (x, y) ' + str(enx) + '/' + str(eny))
-				quit()
-
-
-
-		
-		
-		verify(img, stx, sty, enx, eny)
-
 		mask = Image.new("L", img.size, 0)
 
 		draw = ImageDraw.Draw(mask)
@@ -106,9 +84,10 @@ def buildMandalas(img, currentDir):
 
 	    #create wedge fragment
 		frag = img.copy()
+
 		frag.putalpha(mask)
 		frag = frag.crop(((enx + stx) / 2, sty, enx, (eny + stx) / 2))
-		
+		print('frag x' + str(frag.size[0]))
 		return frag
 
 
@@ -318,8 +297,10 @@ for imageName in listOfImages:
 	print('******************************************************')
 	print('Source image: ' + currentDir)
 
+
+	print('x ' + str(img.size[0]) + ' y ' + str(img.size[1]))
 	#ensure image is in landscape mode
-	if img.size[0] > img.size[1]:
+	if img.size[0] < img.size[1]:
 		img = img.transpose(Image.ROTATE_90)
 		print('Rotated source image')
 
@@ -327,11 +308,9 @@ for imageName in listOfImages:
 	smallestAxis = min(img.size[0], img.size[1])
 
 	if (smallestAxis - (outputWidth / 2) < 1):
-		print(math.floor(smallestAxis * 1))
 		print('Source image is too small (' + str(img.size[0]) + 'px wide, / ' + str(img.size[1]) + 'px high)')
 		print('Requested output width is ' + str(outputWidth) + 'px')
-		print('Output size will be set to ' + str(math.floor(smallestAxis * 0.9)) + 'px')
-		outputWidth = math.floor(smallestAxis * 0.9)
-		print('out - ' + str(outputWidth))
-	
+		print('Output size will be set to ' + str(math.floor((smallestAxis * 0.9) * 2)) + 'px')
+		outputWidth = math.floor((smallestAxis * 0.9) * 2)
+
 	buildMandalas(img, currentDir)
