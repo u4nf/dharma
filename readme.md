@@ -35,22 +35,22 @@ example:
 # Examples
 
 <p float="left">
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/a.jpg" width="200" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/a1.png" width="250" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/a2.png" width="250" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/a3.png" width="250" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a.jpg" width="180" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a1.png" width="200" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a2.png" width="200" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a3.png" width="200" />
 </p>
 
 <p float="left">
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/b.jpg" width="200" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/b1.png" width="250" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/b2.png" width="250" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/b3.png" width="250" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/b.jpg" width="180" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/b1.png" width="200" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/b2.png" width="200" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/b3.png" width="200" />
 </p>
 
 <p float="left">
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/c.jpg" width="200" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/c1.png" width="250" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/c2.png" width="250" />
-  <img src="https://github.com/u4nf/dharma/blob/master/examples/c3.png" width="250" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/c.jpg" width="180" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/c1.png" width="200" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/c2.png" width="200" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/c3.png" width="200" />
 </p>
