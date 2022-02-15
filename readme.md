@@ -9,7 +9,7 @@ The Dharma project is a script that will take a jpg file, and transform it into 
 
 # Usage
 
-**dharmaStandalone.py [-h] [-d D] [-q Q] [-s S]**
+**dharmaStandalone.py \[-h\] \[-d D\] \[-q Q\] \[-s S\]**
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -24,7 +24,13 @@ example:
 - creates 20 mandalas of 2000 pixels width from each jpg file within the myDir directory
 
 # Note
-1 The script will filter out anf iles that do not end in ".jpg" it does not matter what else iis in the source directory.
-1 If the specified output width is not possible due to the source image being of insufficient resolution, the output size will be optimised for the largest size possible.  This will likely result in reduced diversity amongst the final mandalas, as the wedge used to create them will have less varience than it otherwise would.
-1 If the directory "output" does not exist, it will be created and all mandalas will be saved there, each series will be in their own folder with a copy of the source image
-1 For best results use source images in sharp focus
+1. The script will filter out any files that do not end in ".jpg" it does not matter what else iis in the source directory.
+1. If the specified output width is not possible due to the source image being of insufficient resolution, the output size will be optimised for the largest size possible.  This will likely result in reduced diversity amongst the final mandalas, as the wedge used to create them will have less varience than it otherwise would.
+1. If the directory "output" does not exist, it will be created and all mandalas will be saved there, each series will be in their own folder with a copy of the source image
+1. For best results use source images in sharp focus
+
+# Known issues
+- Smaller images may not render correctly when using a 45 degree wedge 
+
+# Examples
+
