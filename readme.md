@@ -36,3 +36,9 @@ example:
 
 Original | Examples | |
 ![](https://github.com/u4nf/dharma/blob/master/examples/a.jpg =250x250) | https://github.com/u4nf/dharma/blob/master/examples/a1.png | https://github.com/u4nf/dharma/blob/master/examples/a2.png | https://github.com/u4nf/dharma/blob/master/examples/a3.png
+<p float="left">
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a.jpg" width="250" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a1.jpg" width="250" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a2.jpg" width="250" />
+  <img src="https://github.com/u4nf/dharma/blob/master/examples/a3.jpg" width="250" />
+</p>
