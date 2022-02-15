@@ -32,7 +32,7 @@ if not os.path.isdir(direct):
 #create list of .jpg in specified directory
 listOfImages = []
 for file in os.listdir(direct):
-	if file.endswith('.jpg'):
+	if file.endswith('.jpg') or file.endswith('.jpeg'):
 		listOfImages.append(file)
 
 
@@ -61,12 +61,12 @@ def buildMandalas(img, currentDir):
 				enx = stx + (math.floor(outputWidth / 2))
 				eny = enx
 
-
+			
 			#if there is remainder the cropping algorithm will be out by a few pixels, this just ensures it returns an integer
 			if ((enx + stx) % 2 == 1):
 				stx = stx + 1
 				print('Decrimented end point of xy axis')
-
+			
 			coordsList.append((stx, sty, enx, eny))
 
 		return(coordsList)
@@ -87,7 +87,7 @@ def buildMandalas(img, currentDir):
 
 		frag.putalpha(mask)
 		frag = frag.crop(((enx + stx) / 2, sty, enx, (eny + stx) / 2))
-		print('frag x' + str(frag.size[0]))
+
 		return frag
 
 
@@ -140,7 +140,6 @@ def buildMandalas(img, currentDir):
 		elif angle == 11.25:
 			frag = deg225ToDeg45(deg1125ToDeg225(frag))
 			angle = 45
-
 
 		#create blank square canvas for output and determine the centre (added 10 pixels to create dead space)
 		output = Image.new('RGBA', (frag.size[0] * 2 + (10), frag.size[0] * 2 + (10)))
@@ -195,11 +194,7 @@ def buildMandalas(img, currentDir):
 		return output
 
 
-	print('source x = ' +str(img.size[0]))
-	print('source y = ' +str(img.size[1]))
-
 	coordsList = generateCoords(img, quantity)
-
 
 	for i in range(0, len(coordsList)):
 		#iterate over each item in the coords list and produce mandala for each
@@ -275,7 +270,6 @@ def buildMandalas(img, currentDir):
 		print('***\n')
 
 
-
 #iterate over all source images
 for imageName in listOfImages:
 
@@ -294,11 +288,11 @@ for imageName in listOfImages:
 	os.rename(currentDir + imageName, currentDir + '0.jpg')
 
 	img = Image.open(currentImage)
-	print('******************************************************')
+	print('\n******************************************************')
 	print('Source image: ' + currentDir)
+	print('source x = ' +str(img.size[0]))
+	print('source y = ' +str(img.size[1]) + '\n')
 
-
-	print('x ' + str(img.size[0]) + ' y ' + str(img.size[1]))
 	#ensure image is in landscape mode
 	if img.size[0] < img.size[1]:
 		img = img.transpose(Image.ROTATE_90)
@@ -310,7 +304,8 @@ for imageName in listOfImages:
 	if (smallestAxis - (outputWidth / 2) < 1):
 		print('Source image is too small (' + str(img.size[0]) + 'px wide, / ' + str(img.size[1]) + 'px high)')
 		print('Requested output width is ' + str(outputWidth) + 'px')
-		print('Output size will be set to ' + str(math.floor((smallestAxis * 0.9) * 2)) + 'px')
 		outputWidth = math.floor((smallestAxis * 0.9) * 2)
+		print('Output size will be set to ' + str(outputWidth) + 'px\n')
+
 
 	buildMandalas(img, currentDir)
