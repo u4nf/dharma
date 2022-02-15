@@ -34,3 +34,5 @@ example:
 
 # Examples
 
+Original | Examples | |
+![](https://github.com/u4nf/dharma/blob/master/examples/a.jpg =250x250) | https://github.com/u4nf/dharma/blob/master/examples/a1.png | https://github.com/u4nf/dharma/blob/master/examples/a2.png | https://github.com/u4nf/dharma/blob/master/examples/a3.png
